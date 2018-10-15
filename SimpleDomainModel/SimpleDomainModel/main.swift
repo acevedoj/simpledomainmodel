@@ -28,17 +28,84 @@ public struct Money {
   public var currency : String
   
   public func convert(_ to: String) -> Money {
+    let fromCurr = self.currency;
+    var newAmountDouble: Double = Double(self.amount)
+    var newAmountInt:Int =  Int(0);
+    
+    if (fromCurr == "USD") {
+        if (to == "GBP") {
+            return Money(amount: self.amount / 2, currency: "GBP")
+        } else if (to == "CAN") {
+            newAmountDouble = Double(self.amount) * 1.25
+            newAmountInt = Int(newAmountDouble)
+            return Money(amount: newAmountInt, currency: "CAN")
+        } else if (to == "EUR") {
+            newAmountDouble = Double(self.amount) * 1.5
+            newAmountInt = Int(newAmountDouble)
+            return Money(amount: newAmountInt, currency: "EUR")
+        } else {
+            return self;
+        }
+    } else if (fromCurr == "GBP") {
+        if (to == "USD") {
+            return Money(amount: self.amount * 2, currency: "USD")
+        } else if (to == "CAN") {
+            newAmountDouble = Double(self.amount) * 2.5
+            newAmountInt = Int(newAmountDouble)
+            return Money(amount: newAmountInt, currency: "CAN")
+        } else if (to == "EUR") {
+            return Money(amount: self.amount * 3, currency: "EUR")
+        } else {
+            return self;
+        }
+    } else if (fromCurr == "CAN") {
+        if (to == "USD") {
+            newAmountDouble = Double(self.amount) / 1.25
+            newAmountInt = Int(newAmountDouble)
+            return Money(amount: newAmountInt, currency: "USD")
+        } else if (to == "GBP") {
+            newAmountDouble = Double(self.amount) / 2.5
+            newAmountInt = Int(newAmountDouble)
+            return Money(amount: newAmountInt, currency: "USD")
+        } else if (to == "EUR") {
+            newAmountDouble = Double(self.amount) / 0.83333333
+            newAmountInt = Int(newAmountDouble)
+            return Money(amount: newAmountInt, currency: "EUR")
+        } else {
+            return self;
+        }
+    } else if (fromCurr == "EUR"){
+        if (to == "USD") {
+            newAmountDouble = Double(self.amount) / 1.5
+            newAmountInt = Int(newAmountDouble)
+            return Money(amount: newAmountInt, currency: "USD")
+        } else if (to == "GBP") {
+            return Money(amount: self.amount / 3, currency: "GBP")
+        } else if (to == "CAN") {
+            newAmountDouble = Double(self.amount) * 0.83333333
+            newAmountInt = Int(newAmountDouble)
+            return Money(amount: newAmountInt, currency: "CAN")
+        } else {
+            return self;
+        }
+    }
+    return self;
   }
   
   public func add(_ to: Money) -> Money {
+    let money = self.convert(to.currency)
+    return Money(amount: to.amount + money.amount, currency: to.currency)
   }
   public func subtract(_ from: Money) -> Money {
+    let money = from.convert(self.currency)
+    return Money(amount: money.amount - self.amount, currency: self.currency)
   }
 }
 
 ////////////////////////////////////
 // Job
 //
+
 open class Job {
   fileprivate var title : String
   fileprivate var type : JobType
@@ -49,12 +116,31 @@ open class Job {
   }
   
   public init(title : String, type : JobType) {
+    self.title = title;
+    self.type = type;
   }
   
   open func calculateIncome(_ hours: Int) -> Int {
+    switch type {
+    case .Hourly(let amount):
+        let hoursDouble: Double = Double(amount) * Double(hours);
+        let hoursInt: Int = Int(hoursDouble);
+        return hoursInt
+    case .Salary(let amount):
+        return amount;
+    }
   }
   
   open func raise(_ amt : Double) {
+    switch type {
+    case .Hourly(var amount):
+        amount = (amount + amt)
+        type = JobType.Hourly(amount)
+    case .Salary(let amount):
+        let salaryDouble: Double = Double(amount) + amt
+        let salaryInt: Int = Int(salaryDouble)
+        type = JobType.Salary(salaryInt)
+    }
   }
 }
 
@@ -68,15 +154,18 @@ open class Person {
 
   fileprivate var _job : Job? = nil
   open var job : Job? {
-    get { }
+    get { return _job }
     set(value) {
+        _job = value
     }
   }
   
   fileprivate var _spouse : Person? = nil
   open var spouse : Person? {
-    get { }
+    get { return _spouse }
     set(value) {
+
+        _spouse = value
     }
   }
   
@@ -87,9 +176,18 @@ open class Person {
   }
   
   open func toString() -> String {
+    let opening = "[Person: ";
+    let firstName = "firstName:\(self.firstName) ";
+    let lastName = "lastName:\(self.lastName) ";
+    let age = "age:\(self.age) ";
+    let job = "job:\(String(describing: self._job?.title)) ";
+    let spouse = "spouse:\(String(describing: self._spouse))]"
+    print(opening + firstName + lastName + age + job + spouse);
+    return opening + firstName + lastName + age + job + spouse;
   }
 }
 
+/*
 ////////////////////////////////////
 // Family
 //
@@ -106,6 +204,7 @@ open class Family {
   }
 }
 
+ */
 
 
 
