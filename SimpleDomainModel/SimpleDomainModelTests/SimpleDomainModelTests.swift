@@ -44,3 +44,4 @@ class SimpleDomainModelTests: XCTestCase {
   //    }
   
 }
+

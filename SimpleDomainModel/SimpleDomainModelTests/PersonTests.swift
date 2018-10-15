@@ -6,7 +6,6 @@
 //  Copyright © 2016 Ted Neward. All rights reserved.
 //
 
-
 import XCTest
 
 class PersonTests: XCTestCase {
@@ -70,5 +69,5 @@ class FamilyTests : XCTestCase {
     let familyIncome = family.householdIncome()
     XCTAssert(familyIncome == 12000)
   }
+  
 }
-
