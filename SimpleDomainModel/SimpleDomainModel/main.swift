@@ -89,6 +89,7 @@ public struct Money {
             return self;
         }
     }
+    print("Currency is not valid, failed to convert!")
     return self;
   }
   
@@ -156,7 +157,9 @@ open class Person {
   open var job : Job? {
     get { return _job }
     set(value) {
-        _job = value
+        if (self.age >= 16) {
+            _job = value
+        }
     }
   }
   
@@ -164,8 +167,9 @@ open class Person {
   open var spouse : Person? {
     get { return _spouse }
     set(value) {
-
-        _spouse = value
+        if (self.age >= 21) {
+            _spouse = value
+        }
     }
   }
   
@@ -187,7 +191,6 @@ open class Person {
   }
 }
 
-/*
 ////////////////////////////////////
 // Family
 //
@@ -195,17 +198,29 @@ open class Family {
   fileprivate var members : [Person] = []
   
   public init(spouse1: Person, spouse2: Person) {
+    if (spouse1._spouse == nil && spouse2._spouse == nil) {
+        spouse1._spouse = spouse2
+        spouse2._spouse = spouse1
+        members.append(spouse1)
+        members.append(spouse2)
+    }
   }
   
   open func haveChild(_ child: Person) -> Bool {
+    if ((members[0]._spouse?.age)! >= 21 || (members[1]._spouse?.age)! >= 21) {
+        members.append(child)
+        return true;
+    }
+    return false;
   }
   
   open func householdIncome() -> Int {
+    var totalIncome: Int = 0
+    for person in members {
+        if (person._job != nil) {
+            totalIncome += (person._job?.calculateIncome(2000))!
+        }
+    }
+    return totalIncome
   }
 }
-
- */
-
-
-
-
